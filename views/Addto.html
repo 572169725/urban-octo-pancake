@@ -1,0 +1,109 @@
+{{ extend './module2.html' }}
+{{ block 'header' }}
+<style>
+  .commodityimage img {
+    width: 10%;
+    margin: 1% 1.5%;
+    transition: .8s;
+  }
+
+  .commodityimage img:hover {
+    transform: scale(1.5);
+    box-shadow: 0 0 8px 3px rgba(0, 0, 0, .2);
+    border-radius: 50%;
+  }
+
+  label {
+    font-size: 18px;
+  }
+
+  label span {
+    color: #b0b0b0;
+    font-size: 14px;
+  }
+
+  .fileimage {
+    display: flex;
+  }
+</style>
+{{ /block }}
+{{ block 'nav' }}
+<li><a href="/admin">控制台</a></li>
+<li class="active"><a href="/admin/AllGoods">所有商品</a></li>
+{{ /block }}
+{{ block 'main' }}
+<div class="title page-header">
+  <div class="allTitile">
+    <h1>添加数据</h1>
+  </div>
+</div>
+<div class="error">
+
+</div>
+<div>
+  <div class="form-group">
+    <label for="commodityname">名字：</label>
+    <input type="text" class="form-control" id="commodityname" maxlength="35">
+  </div>
+  <div class="form-group">
+    <label for="commodityIntroduction">介绍：<span>(最少可输入15字，最多可输入250字。)</span></label>
+    <textarea class="form-control" rows="3" minlength="15" maxlength="250" id="commodityIntroduction"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="commodityprice">价格：</label>
+    <input type="number" class="form-control" id="commodityprice" maxlength="7">
+  </div>
+  <div class="form-group">
+    <label for="commoditystock">库存：</label>
+    <input type="number" class="form-control" id="commoditystock" maxlength="4">
+  </div>
+  <div class="form-group">
+    <label for="commoditychild">子商品：<span>(如果有子商品输入商品ID，如有多个请您用“,”隔开。)</span></label>
+    <input type="text" class="form-control" id="commoditychild">
+  </div>
+  <button type="submit" class="btn btn-primary pull-right confirm" style="margin-bottom: 120px">确认</button>
+</div>
+{{ /block }}
+{{ block 'footer' }}
+<script>
+  $(() => {
+    $('.confirm').on('click', function () {
+      if ($('#commodityname').val()) {
+        if ($('#commodityIntroduction').val()) {
+          if ($('#commodityIntroduction').val().length <= 14) {
+            error('商品介绍的内容太少了')
+          } else {
+            if ($('#commodityprice').val()) {
+              if ($('#commoditystock').val()) {
+                $.post('/admin/AddTo', {
+                  Name: $('#commodityname').val(),
+                  Introduction:$('#commodityIntroduction').val(),
+                  Price:$('#commodityprice').val(),
+                  Stock:$('#commoditystock').val(),
+                  Child:$('#commoditychild').val()
+                }, (data) => {
+                  location.href = '/admin/AllGoods'
+                })
+              } else {
+                error('商品库存不能为空')
+              }
+            } else {
+              error('商品价格不能为空')
+            }
+          }
+        } else {
+          error('商品介绍不能为空')
+        }
+      } else {
+        error('商品名称不能为空')
+      }
+    })
+    function error(content) {
+      $('.error').append(`<div class="alert alert-danger alert-dismissible fade in" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+    <strong>${content}！</strong>
+  </div>`)
+    }
+  })
+</script>
+{{ /block }}

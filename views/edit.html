@@ -1,0 +1,138 @@
+{{ extend './module2.html' }}
+{{ block 'header' }}
+<style>
+  .commodityimage img {
+    width: 10%;
+    margin: 1% 1.5%;
+    transition: .8s;
+  }
+
+  .commodityimage img:hover {
+    transform: scale(1.5);
+    box-shadow: 0 0 8px 3px rgba(0, 0, 0, .2);
+    border-radius: 50%;
+  }
+
+  label {
+    font-size: 18px;
+  }
+
+  label span {
+    color: #b0b0b0;
+    font-size: 14px;
+  }
+
+  .fileimage {
+    display: flex;
+  }
+</style>
+{{ /block }}
+{{ block 'nav' }}
+<li><a href="/admin">控制台</a></li>
+<li class="active"><a href="/admin/AllGoods">所有商品</a></li>
+{{ /block }}
+{{ block 'main' }}
+<div class="title page-header">
+  <div class="allTitile">
+    <h1>编辑数据</h1>
+  </div>
+</div>
+
+<div>
+  <div class="form-group" style="display:none;">
+    <label for="commodityid">ID</label>
+    <input type="number" class="form-control" id="commodityid" value="{{ data.ID }}">
+  </div>
+  <div class="form-group">
+    <label for="commodityname">名字：</label>
+    <input type="text" class="form-control" id="commodityname" maxlength="35" value="{{ data.Name }}">
+  </div>
+  <div class="form-group">
+    <label for="commodityIntroduction">介绍：<span>(最少可输入15字，最多可输入250字。)</span></label>
+    <textarea class="form-control" rows="3" minlength="15" maxlength="250"
+      id="commodityIntroduction">{{ data.Introduce }}</textarea>
+  </div>
+  <div class="form-group">
+    <label for="commodityprice">价格：</label>
+    <input type="text" class="form-control" id="commodityprice" maxlength="7" value="{{ data.Price }}">
+  </div>
+  <div class="form-group">
+    <label for="commoditysalesvolume">已出售：</label>
+    <input type="number" class="form-control" id="commoditysalesvolume" value="{{ data.SalesVolume }}" disabled>
+  </div>
+  <div class="form-group">
+    <label for="commoditystock">库存：</label>
+    <input type="text" class="form-control" id="commoditystock" maxlength="4" value="{{ data.Stock }}">
+  </div>
+  <div class="form-group">
+    <label for="commoditychild">子商品：<span>(如果有子商品输入商品ID，如有多个请您用“,”隔开。)</span></label>
+    <input type="text" class="form-control" id="commoditychild" value="加载中..">
+  </div>
+  <div class="form-group">
+    <label for="commodityimage">图片：</label>
+    <div class="fileimage"><input type="file" name="image[]" id="image" size="50" /><input type="submit" id="demo"
+        value="确认上传"></div>
+    <div class="commodityimage"></div>
+  </div>
+  <button type="submit" class="btn btn-primary pull-right confirm" style="margin-bottom: 120px">确认</button>
+</div>
+{{ /block }}
+{{ block 'footer' }}
+<script>
+  $(() => {
+    $('#commoditychild').val('{{ data.Child }}'.replace(/&#34;/g,''))
+    var img = '{{ data.Image }}'.replace(/&#34;/g, '').replace('[', '').replace(']', '').replace(/' '/g, '')
+    if (img) {
+      img = img.split(',')
+      img.forEach((i, t) => {
+        $('.commodityimage').append('<img src="' + i + '" alt="' + t + '" class="img-thumbnail">')
+      })
+    } else {
+      img = []
+    }
+    $('#commoditychild').val($('#commoditychild').val().replace('[', '').replace(']', ''))
+
+    $('#demo').on('click', () => {
+      uploadFile()
+    })
+    function uploadFile() {
+      var fd = new FormData();
+      fd.append("image", document.getElementById("image").files[0])
+      $.ajax({
+        url: "/image_upload",
+        type: "post",
+        data: fd,
+        processData: false,
+        contentType: false,
+        success: function (res) {
+          img.push(res)
+          $('.commodityimage').append('<img src="' + res + '" class="img-thumbnail">')
+          $('#image').val('')
+        }
+      })
+    }
+
+    $('.confirm').on('click', () => {
+      $('.confirm').attr('class', 'btn btn-primary pull-right confirm disabled')
+      $('.confirm').text('提交中..')
+      let imgs = img.toString().replace('[', '').replace(']', '')
+      let childs = $('#commoditychild').val().replace('[', '').replace(']', '')
+      $.post('/admin/edit', {
+        ID: $('#commodityid').val(),
+        Name: $('#commodityname').val(),
+        Introduce: $('#commodityIntroduction').val(),
+        Price: $('#commodityprice').val(),
+        Stock: $('#commoditystock').val(),
+        Child: childs,
+        Image: imgs
+      }, (data) => {
+        if (data.ok) {
+          $('.confirm').attr('class', 'btn btn-primary pull-right confirm')
+          history.back(-1)
+          location.reload()
+        }
+      })
+    })
+  })
+</script>
+{{ /block }}

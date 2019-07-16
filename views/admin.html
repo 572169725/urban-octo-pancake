@@ -1,0 +1,66 @@
+{{ extend './module2.html' }}
+{{ block 'header' }}
+<link rel="stylesheet" href="/public/lib/bootstrap/css/dashboard.css">
+<style>
+</style>
+{{ /block }}
+{{ block 'nav' }}
+<li class="active"><a href="javascript:;">控制台</a></li>
+<li><a href="/admin/AllGoods">所有商品</a></li>
+{{ /block }}
+{{ block 'main' }}
+<div class="page-header">
+  <h1>数据<small> 最多可展示31条数据。</small></h1>
+</div>
+<div class="table-responsive">
+  <div id="container" style="height: 65vh"></div>
+</div>
+{{ /block }}
+{{ block 'footer' }}
+<script src="/public/lib/bootstrap/js/ie-emulation-modes-warning.js"></script>
+<script type="text/javascript" src="/public/lib/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="/public/lib/echarts/echarts-gl.min.js"></script>
+<script type="text/javascript" src="/public/lib/echarts/ecStat.min.js"></script>
+<script type="text/javascript" src="/public/lib/echarts/dataTool.min.js"></script>
+<script type="text/javascript" src="/public/lib/echarts/china.js"></script>
+<script type="text/javascript" src="/public/lib/echarts/world.js"></script>
+<script type="text/javascript" src="/public/lib/echarts/bmap.min.js"></script>
+<script type="text/javascript" src="/public/lib/echarts/simplex.js"></script>
+<script type="text/javascript">
+  var source = [
+    ['product', '收入', '出售']
+  ]
+  var ArrData = '{{ data }}'.replace(/&#34;/g, '').replace('[', '').replace(']', '')
+  if (ArrData) {
+    ArrData.split('},').forEach((i) => {
+      let Dates = i.split(',')[1].split(':')[1]
+      let Income = i.split(',')[2].split(':')[1]
+      let Sell = i.split(',')[3].split(':')[1]
+      source.push([Dates, Income, Sell])
+    })
+  }
+  var dom = document.getElementById("container")
+  var myChart = echarts.init(dom)
+  var app = {}
+  option = null
+  option = {
+    legend: {},
+    tooltip: {},
+    dataset: {
+      source: source
+    },
+    xAxis: { type: 'category' },
+    yAxis: {},
+    series: [
+      { type: 'bar' },
+      { type: 'bar' }
+    ]
+  }
+  if (option && typeof option === "object") {
+    myChart.setOption(option, true)
+  }
+</script>
+<script>
+
+</script>
+{{ /block }}

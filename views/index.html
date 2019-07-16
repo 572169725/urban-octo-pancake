@@ -1,0 +1,123 @@
+{{ extend './module.html' }}
+
+
+{{ block 'header' }}
+<style>
+  .thumbnail {
+    transition: .8s;
+  }
+
+  .thumbnail:hover {
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, .3)
+  }
+
+  .caption p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
+  .price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .price h2 {
+    color: #ff4757;
+  }
+
+  .price h2::before {
+    content: '$';
+    color: #000;
+  }
+  nav {
+    display: flex;
+    justify-content: center;
+  }
+</style>
+{{ /block }}
+
+
+{{ block 'main' }}
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>Hello, world!</h1>
+    <p>在这里你看得见都可以购买和别的平台一样，如果这里没有你喜欢的产品，你可以自行添加商品。</p>
+    <p><a class="btn btn-primary btn-lg" href="/admin" role="button">前往后台 →</a></p>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    {{ each Commodity }}
+    <div class="col-sm-6 col-md-4">
+      <div class="thumbnail">
+        <img class="img-rounded" src="" alt="{{ $value.Image }}">
+        <div class="caption">
+          <h3>{{ $value.Name }}</h3>
+          <p>{{ $value.Introduce }}</p>
+          <div class="price">
+            <h2>{{ $value.Price }}</h2>
+            <a href="/buy?id={{ $value.ID }}" class="btn btn-primary pull-right" role="button">购买</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{ /each }}
+  </div>
+</div>
+{{ /block }}
+{{ block 'footer' }}
+<div class="container-fluid">
+  <nav>
+    <ul class="pagination">
+
+    </ul>
+  </nav>
+</div>
+<script>
+  $('img').each((i, t) => {
+    if ($(t).attr('alt').replace(/"/g, '').replace('[', '').replace(']', '').split(',')[0]) {
+      $(t).attr('src', $(t).attr('alt').replace(/"/g, '').replace('[', '').replace(']', '').split(',')[0])
+    } else {
+      $(t).attr('src', '/public/image/null.png')
+    }
+  })
+
+
+  let str = ''
+  let page = {{ page }}/10
+  let sum = {{ sum }}
+  if (location.search) {
+    var pages = location.search.split('?')[1].split('&')[0].split('=')[1] / 10 + 1
+  } else {
+    var pages = 1
+  }
+  for (let i = 0; i < sum; i++) {
+    if (i == page) {
+      str += '<li class="active"><a href="/?page=' + i * 10 + '&limit=9">' + (i + 1) + '</a></li>'
+      continue;
+    } else {
+      str += '<li><a href="/?page=' + i * 10 + '&limit=9">' + (i + 1) + '</a></li>'
+    }
+  }
+  let navContent = '<li class="previous"><a href="javascript:;" aria-label="Previous"><span aria-hidden="true">«</span></a></li>' + str + '<li class="next"><a href="javascript:;" aria-label="Next"><span aria-hidden="true">»</span></a></li>'
+  $('.pagination').append(navContent)
+
+  // 上一页
+  if (pages == 1) {
+    $('.previous').attr('class', 'previous disabled')
+  } else {
+    $('.previous a').attr('href', '/?page=' + (pages - 2) * 10 + '&limit=9')
+  }
+
+  // 下一页
+  if (pages == sum) {
+    $('.next').attr('class', 'next disabled')
+  } else {
+    $('.next a').attr('href', '/?page=' + pages * 10 + '&limit=9')
+  }
+</script>
+{{ /block }}

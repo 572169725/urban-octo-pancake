@@ -1,0 +1,337 @@
+{{ extend './module.html' }}
+
+{{ block 'header' }}
+<style>
+  body {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ced6e0;
+  }
+
+  #myCarousel {
+    width: 30vw;
+    height: 30vw;
+    z-index: 5;
+    box-shadow: 0 0 30px 3px rgba(0, 0, 0, .3);
+    transform: translateX(15vw);
+    background: #fff;
+    animation: right 2s forwards;
+  }
+
+  #myCarousel .carousel-control {
+    color: #2f3542 !important;
+  }
+
+  #myCarousel .carousel-control:focus,
+  #myCarousel .carousel-control:hover {
+    color: #2f3542;
+  }
+
+  #myCarousel .carousel-control:focus,
+  #myCarousel .carousel-control:hover {
+    color: #2f3542;
+  }
+
+  #myCarousel .carousel-indicators .active {
+    background: #2f3542 !important
+  }
+
+  #myCarousel .carousel-indicators li {
+    background: #979aa1 !important;
+  }
+
+  #myCarousel .item img {
+    width: 100%;
+  }
+
+  #myCarousel .carousel-control.right {
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 100%) !important;
+  }
+
+  #myCarousel .carousel-control.left {
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 100%) !important;
+  }
+
+  .information {
+    width: 50vw;
+
+    color: #FFF;
+    background: #2f3542;
+    padding: 50px 40px;
+    transform: translateX(-15vw);
+    animation: left 3s forwards;
+  }
+
+  .information .titl h1,
+  .information .CommodityType a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .information .title p {
+    color: #b0b0b0;
+    font-size: 18px;
+  }
+
+  .information .type,
+  .information .price,
+  .information .status {
+    margin-top: 35px;
+  }
+
+  .type .typeContent .row {
+    margin-left: 8px !important;
+  }
+
+  .price .priceContent,
+  .status .statusContent {
+    margin-left: 20px;
+  }
+
+  .information .CommodityType {
+    background: #57606f;
+    padding-left: 0px !important;
+    margin: 5px;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+  }
+
+  .information .CommodityType img {
+    width: 5vh;
+  }
+
+  .information .CommodityType a {
+    display: inline;
+    margin-left: 15px;
+    color: #fff;
+  }
+
+  .price .priceContent span {
+    color: #ff4757;
+  }
+
+  .price .inpua {
+    width: 120px;
+  }
+
+  .status .statusContent {
+    display: flex;
+    font-size: 18px;
+    justify-content: space-between;
+  }
+
+  .status .surplus span {
+    margin-right: 25vw;
+    color: #b0b0b0;
+  }
+
+  .purchasing {
+    float: right;
+    margin-right: 10vw;
+  }
+
+  .alert {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+  }
+
+  @keyframes right {
+    form {
+      transform: translateX(15vw)
+    }
+
+    to {
+      transform: translateX(0vw)
+    }
+  }
+
+  @keyframes left {
+    form {
+      transform: translateX(-15vw)
+    }
+
+    to {
+      transform: translateX(0vw)
+    }
+  }
+</style>
+{{ /block }}
+
+{{ block 'main' }}
+<div class="alert alert-danger alert-dismissible fade in" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+  <strong>错误!</strong>
+</div>
+<div id="myCarousel" class="carousel slide">
+  <ol class="carousel-indicators">
+  </ol>
+  <div class="carousel-inner">
+  </div>
+  <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+  </a>
+  <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+  </a>
+</div>
+<div class="information">
+  <div class="title">
+    <h1>{{ data.Name }}</h1>
+    <p>{{data.Introduce}}</p>
+  </div>
+  <div class="type">
+    <div class="typeTitle">
+      <h3>类型：</h3>
+    </div>
+    <div class="typeContent container-fluid">
+      <div class="row">
+
+      </div>
+    </div>
+  </div>
+  <div class="status">
+    <div class="statusTitle">
+      <h3>状态：</h3>
+    </div>
+    <div class="statusContent">
+      <div class="sell">已出售：<span>{{ data.SalesVolume }}</span></div>
+      <div class="surplus">剩余：<span>{{ data.Stock }}</span></div>
+    </div>
+
+  </div>
+  <div class="price">
+    <div class="priceTitle">
+      <h3>价格：</h3>
+    </div>
+    <div class="priceContent">
+      <h1>总计：<span class="total">{{ data.Price }}</span></h1>
+      <div class="form-inline">
+        <input type="number" class="form-control inpua" maxlength="1" value="1">
+        <div class="purchasing btn btn-primary">购买</div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ /block }}
+
+{{ block 'footer' }}
+<script>
+
+  $(function () {
+
+    '{{ data.Child }}'.replace(/&#34;/g, '').replace('[', '').replace(']', '').split(',').forEach(element => {
+      element = parseInt(element)
+      let url = '/child?id=' + element
+      let str = ''
+      $.get(url, (data, error) => {
+        if (data) {
+          $('.typeContent .row').append(`
+        <div class="col-md-3 CommodityType">
+            <img src="${ data.image[0]}" class="img-thumbnail">
+            <a href="buy?id=${data.id}">${data.title}</a>
+        </div>`)
+          $('#myCarousel').width($('.information').height() + 180)
+          $('#myCarousel').height($('.information').height() + 180)
+        }
+      })
+    })
+
+    var CarouselImage = ''
+    var carouselIndicators = ''
+    var childs = '{{ data.Image }}'.replace(/&#34;/g, '').replace('[', '').replace(']', '')
+    if (childs) {
+      childs.split(',').forEach((i, t) => {
+        if (t == 0) {
+          CarouselImage += '<div class="item active"><img src="' + i + '"/></div>'
+          carouselIndicators += '<li data-target="#myCarousel" data-slide-to="' + t + '" class="active"></li>'
+        } else {
+          CarouselImage += '<div class="item"><img src="' + i + '"/></div>'
+          carouselIndicators += '<li data-target="#myCarousel" data-slide-to="' + t + '"></li>'
+        }
+      })
+    } else {
+      CarouselImage += '<div class="item active"><img src="/public/image/null.png"/></div>'
+      carouselIndicators += '<li data-target="#myCarousel" data-slide-to="0" class="active"></li>'
+    }
+
+    var inpua = $('.inpua') // 购买数量
+    const total = parseFloat($('.total').html()) // 单个商品价格
+    const surplus = $('.surplus span').text()
+    inpua.on('input', () => {
+      let inpuas = inpua.val()
+      if (inpuas <= 0) {
+        inpua.val('')
+        $('.total').html(total)
+        $('.purchasing').attr('class', 'purchasing btn btn-primary disabled')
+      } else {
+        $('.purchasing').attr('class', 'purchasing btn btn-primary')
+        if (inpuas >= 999) {
+          inpua.val(999)
+          $('.total').html(total * 999)
+        } else {
+          $('.total').html(total * inpuas)
+        }
+      }
+    })
+    $('.alert').hide()
+    $('.purchasing').on('click', () => {
+      let inputs = $('.inpua').val()
+      if (inputs) {
+        if (parseInt(inputs)+1 > parseInt(surplus)) {
+          $('.alert').show()
+          $('.alert strong').text('您购买的数量太多了，请你减少数量后再购买。')
+        }
+        else {
+          $.post('/buy', {
+            surplus: parseInt(inputs),
+            id: location.search.split('?')[1].split('=')[1]
+          }, (data) => {
+            if(data) {
+              if(data.ok = 1) {
+                location.reload()
+              }
+            }
+          })
+        }
+      } else {
+        //
+      }
+    })
+
+    // 轮播
+    $('.carousel-inner').append(CarouselImage)
+    $('.carousel-indicators').append(carouselIndicators)
+    $(".start-slide").click(function () {
+      $("#myCarousel").carousel('cycle')
+    })
+    $(".pause-slide").click(function () {
+      $("#myCarousel").carousel('pause')
+    })
+    $(".prev-slide").click(function () {
+      $("#myCarousel").carousel('prev')
+    })
+    $(".next-slide").click(function () {
+      $("#myCarousel").carousel('next')
+    })
+    $(".slide-one").click(function () {
+      $("#myCarousel").carousel(0)
+    })
+    $(".slide-two").click(function () {
+      $("#myCarousel").carousel(1)
+    })
+    $(".slide-three").click(function () {
+      $("#myCarousel").carousel(2)
+    })
+    $('.carousel').carousel({
+      interval: 2000
+    })
+  })
+</script>
+{{ /block }}

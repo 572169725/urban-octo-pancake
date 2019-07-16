@@ -1,0 +1,104 @@
+{{ extend './module2.html' }}
+{{ block 'header' }}
+<style>
+  .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+  }
+
+  .allTitile {
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .allTitile a {
+    margin-left: 25px;
+  }
+</style>
+{{ /block }}
+{{ block 'nav' }}
+<li><a href="/admin">控制台</a></li>
+<li class="active"><a href="javascript:;">所有商品</a></li>
+{{ /block }}
+{{ block 'main' }}
+<div class="title page-header">
+  <div class="allTitile">
+    <h1>所有商品</h1>
+    <p><a href="/admin/AddTo" class="btn btn-primary">添加商品</a></p>
+  </div>
+  <nav>
+    <ul class="pagination">
+
+    </ul>
+  </nav>
+</div>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>名称</th>
+      <th>介绍</th>
+      <th>单价</th>
+      <th>库存</th>
+      <th>销量</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{ each data }}
+    <tr>
+      <th scope="row">{{ $value.ID }}</th>
+      <td>{{ $value.Name }}</td>
+      <td>{{ $value.Introduce }}</td>
+      <td>{{ $value.Price }}</td>
+      <td>{{ $value.SalesVolume }}</td>
+      <td>{{ $value.Stock }}</td>
+      <td>
+        <a href="/admin/edit?id={{ $value.ID }}" class="btn btn-primary">编辑</a>
+        <a href="/admin/delete?id={{ $value.ID }}" class="btn btn-danger">删除</a>
+      </td>
+    </tr>
+    {{ /each }}
+  </tbody>
+</table>
+{{ /block }}
+
+{{block 'footer' }}
+<script>
+  $(() => {
+    let str = ''
+    let page = {{ page }}/10
+    let sum = {{ sum }}
+    if(location.search) {
+      var pages = location.search.split('?')[1].split('&')[0].split('=')[1] / 10 + 1
+    }else {
+      var pages = 1
+    }
+    for (let i = 0; i < sum; i++) {
+    if (i == page) {
+      str += '<li class="active"><a href="/admin/AllGoods?page=' + i * 10 + '&limit=10">' + (i + 1) + '</a></li>'
+      continue;
+    } else {
+      str += '<li><a href="/admin/AllGoods?page=' + i * 10 + '&limit=10">' + (i + 1) + '</a></li>'
+    }
+  }
+  let navContent = '<li class="previous"><a href="javascript:;" aria-label="Previous"><span aria-hidden="true">«</span></a></li>' + str + '<li class="next"><a href="javascript:;" aria-label="Next"><span aria-hidden="true">»</span></a></li>'
+  $('.pagination').append(navContent)
+
+  // 上一页
+  if (pages == 1) {
+    $('.previous').attr('class', 'previous disabled')
+  } else {
+    $('.previous a').attr('href', '/admin/AllGoods?page=' + (pages - 2) * 10 + '&limit=10')
+  }
+
+  // 下一页
+  if (pages == sum) {
+    $('.next').attr('class', 'next disabled')
+  } else {
+    $('.next a').attr('href', '/admin/AllGoods?page=' + pages * 10 + '&limit=10')
+  }
+  })
+</script>
+{{ /block }}
